@@ -9,10 +9,10 @@ const Button = ({ text, handleClick }) => {
 	return <button onClick={handleClick}>{text}</button>;
 };
 
-const Estadistica = ({ text, data }) => {
+const Statistic = ({ text, value }) => {
 	return (
 		<p>
-			{text} {data}
+			{text} {value}
 		</p>
 	);
 };
@@ -40,12 +40,12 @@ const Statistics = ({ good, neutral, bad }) => {
 		<section>
 			<Section title="statistics" />
 			<div>
-				<Estadistica text="good" data={good} />
-				<Estadistica text="neutral" data={neutral} />
-				<Estadistica text="bad" data={bad} />
-				<Estadistica text="all" data={getReviewTotal()} />
-				<Estadistica text="average" data={getReviewAverage()} />
-				<Estadistica text="positive" data={getReviewPercentage(good)} />
+				<Statistic text="good" value={good} />
+				<Statistic text="neutral" value={neutral} />
+				<Statistic text="bad" value={bad} />
+				<Statistic text="all" value={getReviewTotal()} />
+				<Statistic text="average" value={getReviewAverage()} />
+				<Statistic text="positive" value={getReviewPercentage(good)} />
 			</div>
 		</section>
 	);
