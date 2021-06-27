@@ -31,6 +31,11 @@ const Statistics = ({ good, neutral, bad }) => {
 		const total = getReviewTotal();
 		return `${(review / total) * 100} %`;
 	};
+
+	if (!(good || neutral || bad)) {
+		return <p>No feedback give</p>;
+	}
+
 	return (
 		<section>
 			<Section title="statistics" />
@@ -54,12 +59,14 @@ const App = () => {
 
 	return (
 		<div>
-			<Section title="give feedback" />
-			<div>
-				<Button text="good" handleClick={() => setGood(good + 1)} />
-				<Button text="neutral" handleClick={() => setNeutral(neutral + 1)} />
-				<Button text="bad" handleClick={() => setBad(bad + 1)} />
-			</div>
+			<section>
+				<Section title="give feedback" />
+				<div>
+					<Button text="good" handleClick={() => setGood(good + 1)} />
+					<Button text="neutral" handleClick={() => setNeutral(neutral + 1)} />
+					<Button text="bad" handleClick={() => setBad(bad + 1)} />
+				</div>
+			</section>
 			<Statistics good={good} neutral={neutral} bad={bad} />
 		</div>
 	);
