@@ -11,14 +11,29 @@ const App = (props) => {
 		setPoints(copy);
 	};
 
+	const getMostVotedAnecdote = () => {
+		const index = points.indexOf(Math.max.apply(null, points));
+		return anecdotes[index];
+	};
+
 	return (
 		<div>
-			<p>{props.anecdotes[selected]}</p>
-			<p>has {points[selected]} votes</p>
-			<button onClick={voteAnecdote}>vote</button>
-			<button onClick={() => setSelected(Math.floor(Math.random() * 6))}>
-				next anecdote
-			</button>
+			<section>
+				<h1>Anecdote of the day</h1>
+
+				<p>{props.anecdotes[selected]}</p>
+				<p>has {points[selected]} votes</p>
+
+				<button onClick={voteAnecdote}>vote</button>
+				<button onClick={() => setSelected(Math.floor(Math.random() * 6))}>
+					next anecdote
+				</button>
+			</section>
+
+			<section>
+				<h1>Anecdote with most votes</h1>
+				<p>{getMostVotedAnecdote()}</p>
+			</section>
 		</div>
 	);
 };
