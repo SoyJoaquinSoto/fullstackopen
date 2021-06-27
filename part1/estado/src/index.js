@@ -9,10 +9,10 @@ const Button = ({ text, handleClick }) => {
 	return <button onClick={handleClick}>{text}</button>;
 };
 
-const Review = ({ text, counter }) => {
+const Estadistica = ({ text, data }) => {
 	return (
 		<p>
-			{text} {counter}
+			{text} {data}
 		</p>
 	);
 };
@@ -22,6 +22,20 @@ const App = () => {
 	const [good, setGood] = useState(0);
 	const [neutral, setNeutral] = useState(0);
 	const [bad, setBad] = useState(0);
+
+	const getReviewTotal = () => {
+		return [good, neutral, bad].reduce((acum, review) => acum + review);
+	};
+
+	const getReviewAverage = () => {
+		const total = getReviewTotal();
+		return (good - bad) / total;
+	};
+
+	const getReviewPercentage = (review) => {
+		const total = getReviewTotal();
+		return `${(review / total) * 100} %`;
+	};
 
 	return (
 		<div>
@@ -33,9 +47,12 @@ const App = () => {
 			</div>
 			<Section title="statistics" />
 			<div>
-				<Review text="good" counter={good} />
-				<Review text="neutral" counter={neutral} />
-				<Review text="bad" counter={bad} />
+				<Estadistica text="good" data={good} />
+				<Estadistica text="neutral" data={neutral} />
+				<Estadistica text="bad" data={bad} />
+				<Estadistica text="all" data={getReviewTotal()} />
+				<Estadistica text="average" data={getReviewAverage()} />
+				<Estadistica text="positive" data={getReviewPercentage(good)} />
 			</div>
 		</div>
 	);
