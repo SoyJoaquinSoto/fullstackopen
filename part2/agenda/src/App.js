@@ -1,58 +1,19 @@
-import React, { useState } from "react";
-
-const Filter = ({ nameFilter, handleChange }) => {
-	return (
-		<div>
-			filter shown with:
-			<input value={nameFilter} onChange={handleChange} />
-		</div>
-	);
-};
-
-const PersonForm = ({ handleSubmit, newPerson, handleChange }) => {
-	return (
-		<form onSubmit={handleSubmit}>
-			<div>
-				name:{" "}
-				<input name="name" value={newPerson.name} onChange={handleChange} />
-			</div>
-			<div>
-				number:{" "}
-				<input name="number" value={newPerson.number} onChange={handleChange} />
-			</div>
-			<div>
-				<button type="submit">add</button>
-			</div>
-		</form>
-	);
-};
-
-const Persons = ({ persons, nameFilter }) => {
-	return (
-		<div>
-			{persons &&
-				persons
-					.filter((person) =>
-						person.name.toUpperCase().includes(nameFilter.toUpperCase())
-					)
-					.map((person) => (
-						<p key={person.name}>
-							{person.name} {person.number}
-						</p>
-					))}
-		</div>
-	);
-};
+import React, { useEffect, useState } from "react";
+import Filter from "./Filter";
+import PersonForm from "./PersonForm";
+import Persons from "./Persons";
+import axios from "axios";
 
 const App = () => {
-	const [persons, setPersons] = useState([
-		{ name: "Arto Hellas", number: "040-123456" },
-		{ name: "Ada Lovelace", number: "39-44-5323523" },
-		{ name: "Dan Abramov", number: "12-43-234345" },
-		{ name: "Mary Poppendieck", number: "39-23-6423122" },
-	]);
+	const [persons, setPersons] = useState([]);
 	const [newPerson, setNewPerson] = useState({ name: "", number: "" });
 	const [nameFilter, setNameFilter] = useState("");
+
+	useEffect(() => {
+		axios.get("http://localhost:3001/persons").then((response) => {
+			setPersons(response.data);
+		});
+	}, []);
 
 	const handlePersonChange = (e) => {
 		setNewPerson({ ...newPerson, [e.target.name]: e.target.value });
