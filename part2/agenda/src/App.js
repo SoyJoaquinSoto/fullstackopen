@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Filter from "./Filter";
 import PersonForm from "./PersonForm";
 import Persons from "./Persons";
-import axios from "axios";
+import services from "./services";
 
 const App = () => {
 	const [persons, setPersons] = useState([]);
@@ -10,8 +10,8 @@ const App = () => {
 	const [nameFilter, setNameFilter] = useState("");
 
 	useEffect(() => {
-		axios.get("http://localhost:3001/persons").then((response) => {
-			setPersons(response.data);
+		services.getAll().then((response) => {
+			setPersons(response);
 		});
 	}, []);
 
@@ -36,6 +36,10 @@ const App = () => {
 		}
 
 		setPersons([...persons, newPerson]);
+		services.create(newPerson).then((response) => {
+			setPersons([...persons, response]);
+			setNewPerson({ name: "", number: "" });
+		});
 	};
 
 	return (
