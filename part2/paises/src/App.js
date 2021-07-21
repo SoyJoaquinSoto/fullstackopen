@@ -10,7 +10,7 @@ const Finder = ({ handleChange }) => {
 	);
 };
 
-const Countries = ({ countries }) => {
+const Countries = ({ countries, handleClick }) => {
 	if (!countries) {
 		return <></>;
 	}
@@ -48,7 +48,10 @@ const Countries = ({ countries }) => {
 	return (
 		<ul>
 			{countries.map((country) => (
-				<li key={country.numericCode}>{country.name}</li>
+				<li key={country.numericCode}>
+					{country.name}
+					<button onClick={() => handleClick(country.numericCode)}>show</button>
+				</li>
 			))}
 		</ul>
 	);
@@ -77,10 +80,16 @@ function App() {
 		);
 	};
 
+	const handleClick = (countryCode) => {
+		setFilteredCountries(
+			countries.filter((country) => country.numericCode === countryCode)
+		);
+	};
+
 	return (
 		<div>
 			<Finder handleChange={handleChange} />
-			<Countries countries={filteredCountries} />
+			<Countries countries={filteredCountries} handleClick={handleClick} />
 		</div>
 	);
 }
