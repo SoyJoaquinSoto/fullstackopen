@@ -11,7 +11,7 @@ const Persons = ({ persons, nameFilter, deletePerson }) => {
 					.map((person) => (
 						<p key={person.name}>
 							{person.name} {person.number}
-							<button onClick={() => deletePerson(person.id)}>delete</button>
+							<button onClick={() => deletePerson(person)}>delete</button>
 						</p>
 					))}
 		</div>
