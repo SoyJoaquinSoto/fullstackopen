@@ -9,7 +9,7 @@ const App = () => {
 	const [persons, setPersons] = useState([]);
 	const [newPerson, setNewPerson] = useState({ name: "", number: "" });
 	const [nameFilter, setNameFilter] = useState("");
-	const [successMessage, setSuccessMessage] = useState("");
+	const [notification, setNotification] = useState({ message: "", type: "" });
 
 	useEffect(() => {
 		services.getAll().then((response) => {
@@ -42,16 +42,31 @@ const App = () => {
 					`${selectedPerson.name} is already added to the phonebook, replace the old number with a new one?`
 				)
 			) {
-				services.update(selectedPerson.id, newPerson).then((returnedPerson) => {
-					setPersons(
-						persons.map((person) =>
-							person.id === returnedPerson.id ? returnedPerson : person
-						)
-					);
-					setSuccessMessage(`Updated ${newPerson.name}`);
-					setTimeout(() => setSuccessMessage(""), 2000);
-					setNewPerson({ name: "", number: "" });
-				});
+				services
+					.update(selectedPerson.id, newPerson)
+					.then((returnedPerson) => {
+						setPersons(
+							persons.map((person) =>
+								person.id === returnedPerson.id ? returnedPerson : person
+							)
+						);
+						setNotification({
+							message: `Updated ${newPerson.name}`,
+							type: "success",
+						});
+						setTimeout(() => setNotification({ message: "", type: "" }), 2000);
+						setNewPerson({ name: "", number: "" });
+					})
+					.catch((error) => {
+						setPersons(
+							persons.filter((person) => person.id !== selectedPerson.id)
+						);
+						setNotification({
+							message: `Information of ${selectedPerson.name} has already been removed from the server`,
+							type: "error",
+						});
+						setTimeout(() => setNotification({ message: "", type: "" }), 2000);
+					});
 			}
 			return;
 		}
@@ -59,8 +74,11 @@ const App = () => {
 		setPersons([...persons, newPerson]);
 		services.create(newPerson).then((response) => {
 			setPersons([...persons, response]);
-			setSuccessMessage(`Added ${newPerson.name}`);
-			setTimeout(() => setSuccessMessage(""), 2000);
+			setNotification({
+				message: `Added ${newPerson.name}`,
+				type: "success",
+			});
+			setTimeout(() => setNotification({ message: "", type: "" }), 2000);
 			setNewPerson({ name: "", number: "" });
 		});
 	};
@@ -80,7 +98,7 @@ const App = () => {
 	return (
 		<div>
 			<h2>Phonebook</h2>
-			<Notification message={successMessage} />
+			<Notification notification={notification} />
 			<Filter nameFilter={nameFilter} handleChange={handleNameFilterChange} />
 
 			<h2>add a new</h2>

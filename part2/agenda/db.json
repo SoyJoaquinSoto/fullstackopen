@@ -1,19 +1,3 @@
 {
-  "persons": [
-    {
-      "name": "Joaquín Soto De la Mora",
-      "number": "123",
-      "id": 1
-    },
-    {
-      "name": "DonSoto",
-      "number": "123123",
-      "id": 2
-    },
-    {
-      "name": "asdasd",
-      "number": "123123",
-      "id": 3
-    }
-  ]
+  "persons": []
 }
