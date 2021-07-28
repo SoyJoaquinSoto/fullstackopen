@@ -6,15 +6,19 @@ import services from "./services";
 import Notification from "./Notification";
 
 const App = () => {
-	const [persons, setPersons] = useState([]);
+	const [people, setPeople] = useState([]);
 	const [newPerson, setNewPerson] = useState({ name: "", number: "" });
 	const [nameFilter, setNameFilter] = useState("");
 	const [notification, setNotification] = useState({ message: "", type: "" });
 
-	useEffect(() => {
+	const getAllPeople = () => {
 		services.getAll().then((response) => {
-			setPersons(response);
+			setPeople(response);
 		});
+	};
+
+	useEffect(() => {
+		getAllPeople();
 	}, []);
 
 	const handlePersonChange = (e) => {
@@ -32,7 +36,7 @@ const App = () => {
 			return;
 		}
 
-		const selectedPerson = persons.find(
+		const selectedPerson = people.find(
 			(person) => person.name === newPerson.name
 		);
 
@@ -45,8 +49,8 @@ const App = () => {
 				services
 					.update(selectedPerson.id, newPerson)
 					.then((returnedPerson) => {
-						setPersons(
-							persons.map((person) =>
+						setPeople(
+							people.map((person) =>
 								person.id === returnedPerson.id ? returnedPerson : person
 							)
 						);
@@ -58,29 +62,48 @@ const App = () => {
 						setNewPerson({ name: "", number: "" });
 					})
 					.catch((error) => {
-						setPersons(
-							persons.filter((person) => person.id !== selectedPerson.id)
-						);
+						if (error.response.status === 404) {
+							setPeople(
+								people.filter((person) => person.id !== selectedPerson.id)
+							);
+							setNotification({
+								message: `Information of ${selectedPerson.name} has already been removed from the server`,
+								type: "error",
+							});
+							setTimeout(
+								() => setNotification({ message: "", type: "" }),
+								2000
+							);
+							return;
+						}
+
 						setNotification({
-							message: `Information of ${selectedPerson.name} has already been removed from the server`,
+							message: error.response.data.error,
 							type: "error",
 						});
-						setTimeout(() => setNotification({ message: "", type: "" }), 2000);
+						setTimeout(() => setNotification({ message: "", type: "" }), 4000);
 					});
 			}
 			return;
 		}
-
-		setPersons([...persons, newPerson]);
-		services.create(newPerson).then((response) => {
-			setPersons([...persons, response]);
-			setNotification({
-				message: `Added ${newPerson.name}`,
-				type: "success",
+		services
+			.create(newPerson)
+			.then((response) => {
+				setPeople([...people, response]);
+				setNotification({
+					message: `Added ${newPerson.name}`,
+					type: "success",
+				});
+				setTimeout(() => setNotification({ message: "", type: "" }), 2000);
+				setNewPerson({ name: "", number: "" });
+			})
+			.catch((error) => {
+				setNotification({
+					message: error.response.data.error,
+					type: "error",
+				});
+				setTimeout(() => setNotification({ message: "", type: "" }), 4000);
 			});
-			setTimeout(() => setNotification({ message: "", type: "" }), 2000);
-			setNewPerson({ name: "", number: "" });
-		});
 	};
 
 	const deletePerson = (selectedPerson) => {
@@ -88,9 +111,7 @@ const App = () => {
 			services
 				.remove(selectedPerson.id)
 				.then(
-					setPersons(
-						persons.filter((person) => person.id !== selectedPerson.id)
-					)
+					setPeople(people.filter((person) => person.id !== selectedPerson.id))
 				);
 		}
 	};
@@ -110,7 +131,7 @@ const App = () => {
 
 			<h2>Numbers</h2>
 			<Persons
-				persons={persons}
+				persons={people}
 				nameFilter={nameFilter}
 				deletePerson={deletePerson}
 			/>
